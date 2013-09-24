@@ -77,6 +77,9 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GamesApplication\GamesApplication.vcxproj">
+      <Project>{dfe10649-6d27-4836-b24f-2d6de056a956}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Window\Window.vcxproj">
       <Project>{db0e915c-43b1-49a3-a126-3551bf087ffe}</Project>
     </ProjectReference>
