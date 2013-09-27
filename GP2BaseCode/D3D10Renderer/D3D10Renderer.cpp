@@ -6,8 +6,9 @@
 D3D10Renderer::D3D10Renderer()
 {
 	m_pD3D10Device = NULL;
-	m_pSwapChain = NULL;
 	m_pRenderTargetView = NULL;
+	m_pSwapChain = NULL;
+	
 	m_pDepthStencelView = NULL;
 	m_pDepthStencilTexture = NULL;
 }
@@ -17,14 +18,14 @@ D3D10Renderer::~D3D10Renderer()
 	if (m_pD3D10Device)
 		m_pD3D10Device->ClearState();
 
-	if(m_pSwapChain)
-		m_pSwapChain->Release();
 	if(m_pRenderTargetView)
 		m_pRenderTargetView->Release();
 	if(m_pDepthStencelView)
 		m_pDepthStencelView->Release();
 	if(m_pDepthStencilTexture)
 		m_pDepthStencilTexture->Release();
+		if(m_pSwapChain)
+		m_pSwapChain->Release();
 	if (m_pD3D10Device)
 		m_pD3D10Device->Release();
 }
@@ -54,7 +55,7 @@ bool D3D10Renderer::createDevice(HWND window, int windowWidth, int windowHeight,
 
 	UINT createDeviceFlags = 0;
 #ifdef _DEBUG
-	createDeviceFlags |= D3D10_CREATE_DEVICE_DEBUG;
+	createDeviceFlags|=D3D10_CREATE_DEVICE_DEBUG;
 #endif
 
 	DXGI_SWAP_CHAIN_DESC sd;
@@ -64,6 +65,7 @@ bool D3D10Renderer::createDevice(HWND window, int windowWidth, int windowHeight,
 		sd.BufferCount = 2;
 	else
 		sd.BufferCount = 1;
+
 	sd.OutputWindow = window;
 	sd.Windowed = (BOOL)(!fullScreen);
 	sd.SampleDesc.Count = 1;

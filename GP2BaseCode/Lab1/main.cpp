@@ -19,7 +19,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 int main(int argc, char **argv)
 #endif
 {
-	CGameApplication *pApp=new CGameApplication();
+	CGameApplication *pApp = new CGameApplication();
 	if (!pApp->init())
 	{
 		if (pApp)

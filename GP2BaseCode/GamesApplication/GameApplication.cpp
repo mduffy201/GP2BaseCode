@@ -11,6 +11,7 @@ CGameApplication::CGameApplication(void)
 {
 //Set to NULL
 	m_pWindow = NULL;
+	m_pRenderer=NULL;
 	//Set the windoe name to GP2
 	m_GameOptionDesc.gameName = TEXT("GP2");
 	//Window Height and Width
@@ -25,6 +26,11 @@ CGameApplication::CGameApplication(void)
 //Deconstructor
 CGameApplication::~CGameApplication(void)
 {
+		if (m_pRenderer)
+	{
+		delete m_pRenderer;
+		m_pRenderer=NULL;
+	}
 if(m_pWindow)
 {
 	delete m_pWindow;
