@@ -86,3 +86,86 @@ bool D3D10Renderer::createDevice(HWND window, int windowWidth, int windowHeight,
 
 	return true;
 }
+
+//Grabs the backbuffer from the swap chain and then creates
+//a depth stencil texture
+bool D3D10Renderer::createInitialRenderTarget(int windowWidth, int windowHeight)
+{
+	ID3D10Texture2D *pBackBuffer;
+
+	if (FAILED(m_pSwapChain->GetBuffer(0, 
+		__uuidof(ID3D10Texture2D),
+		(void**)&pBackBuffer))) 
+		return false;
+
+	D3D10_TEXTURE2D_DESC descDepth;
+	descDepth.Width=windowWidth;
+	descDepth.Height=windowHeight;
+	descDepth.MipLevels=1;
+	descDepth.ArraySize=1;
+	descDepth.Format=DXGI_FORMAT_D32_FLOAT;
+	descDepth.SampleDesc.Count=1;
+	descDepth.SampleDesc.Quality=0;
+	descDepth.Usage=D3D10_USAGE_DEFAULT;
+	descDepth.BindFlags=D3D10_BIND_DEPTH_STENCIL;
+	descDepth.CPUAccessFlags=0;
+	descDepth.MiscFlags=0;
+
+	if (FAILED(m_pD3D10Device->CreateTexture2D(&descDepth,NULL,
+			&m_pDepthStencilTexture)))
+		return false;
+
+	//creates the DepthStencilView and the RenderTargetView, binds them both to the
+	//pipeline and then finally creates a viewport; which is used in the pipeline for some of the transformations
+	D3D10_DEPTH_STENCIL_VIEW_DESC descDSV;
+	descDSV.Format=descDepth.Format;
+	descDSV.ViewDimension=D3D10_DSV_DIMENSION_TEXTURE2D;
+	descDSV.Texture2D.MipSlice=0;
+
+	if (FAILED(m_pD3D10Device->CreateDepthStencilView(m_pDepthStencilTexture,
+                   &descDSV,&m_pDepthStencelView)))
+		return false;
+
+	if (FAILED(m_pD3D10Device->CreateRenderTargetView( pBackBuffer, 
+		NULL, 
+		&m_pRenderTargetView ))){
+             pBackBuffer->Release();
+		return  false;
+	}
+       pBackBuffer->Release();
+
+	m_pD3D10Device->OMSetRenderTargets(1, 
+		&m_pRenderTargetView,		
+		m_pDepthStencelView);
+
+	D3D10_VIEWPORT vp;
+   	vp.Width = windowWidth;
+    vp.Height = windowHeight;
+    vp.MinDepth = 0.0f;
+    vp.MaxDepth = 1.0f;
+    vp.TopLeftX = 0;
+    vp.TopLeftY = 0;
+    
+	m_pD3D10Device->RSSetViewports( 1 
+		, &vp );
+	return true;
+}
+
+//clears all buffers and then presents the swapchain which flip the back and the front buffers and low
+//and behold an image will appear
+void D3D10Renderer::clear(float r,float g,float b,float a)
+{
+    // Just clear the backbuffer, colours start at 0.0 to 1.0
+	// Red, Green , Blue, Alpha - BMD
+    const float ClearColor[4] = { r, g, b, a}; 
+	//Clear the Render Target
+	//http://msdn.microsoft.com/en-us/library/bb173539%28v=vs.85%29.aspx - BMD
+    m_pD3D10Device->ClearRenderTargetView( m_pRenderTargetView, ClearColor );
+	m_pD3D10Device->ClearDepthStencilView(m_pDepthStencelView,D3D10_CLEAR_DEPTH,1.0f,0);
+}
+void D3D10Renderer::present()
+{
+	//Swaps the buffers in the chain, the back buffer to the front(screen)
+	//http://msdn.microsoft.com/en-us/library/bb174576%28v=vs.85%29.aspx - BMD
+    m_pSwapChain->Present( 0, 0 );
+}
