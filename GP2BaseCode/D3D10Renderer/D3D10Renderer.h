@@ -30,7 +30,7 @@ private:
 	ID3D10Device * m_pD3D10Device;
 	IDXGISwapChain * m_pSwapChain;
 	ID3D10RenderTargetView * m_pRenderTargetView;
-	ID3D10DepthStencilView * m_PDepthStencelView;
+	ID3D10DepthStencilView * m_pDepthStencelView;
 	ID3D10Texture2D * m_pDepthStencilTexture;
 
 };

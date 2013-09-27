@@ -80,6 +80,9 @@
   <ItemGroup>
     <ClInclude Include="D3D10Renderer.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="D3D10Renderer.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
