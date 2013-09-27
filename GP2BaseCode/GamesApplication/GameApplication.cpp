@@ -3,7 +3,8 @@
 //should really check to see if we are on a windows platform
 #include "../Window/Win32Window.h"
 #include "../D3D10Renderer/D3D10Renderer.h"
-
+#include <fstream> 
+using namespace std;
 //Constructor
 CGameApplication::CGameApplication(void)
 {
@@ -70,7 +71,7 @@ bool CGameApplication::initPhysics()
 bool CGameApplication::initGraphics()
 {
 	//check our settings first, to see what graphics mode we are in
-	m_pRenderer=new D3D10Renderer();
+	m_pRenderer = new D3D10Renderer();
 	if (!m_pRenderer->init(m_pWindow->getHandleToWindow(),m_GameOptionDesc.fullscreen))
 		return false;
 
