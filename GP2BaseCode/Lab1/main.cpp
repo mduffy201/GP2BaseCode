@@ -7,7 +7,6 @@
 
 #include "../GamesApplication/GameApplication.h"
 
-
 //Check to see if we are on windows
 #ifdef WIN32
 int WINAPI WinMain(HINSTANCE hInstance, 
