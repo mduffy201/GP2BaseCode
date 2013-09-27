@@ -27,5 +27,22 @@ D3D10Renderer::~D3D10Renderer()
 		m_pDepthStencilTexture->Release();
 	if (m_pD3D10Device)
 		m_pD3D10Device->Release();
+}
 
+//Calculate the size of the window to be drawn
+bool D3D10Renderer::init(void *pWindowHandle, bool fullScreen)
+{
+	HWND window = (HWND)pWindowHandle;
+	RECT windowRect;
+	GetClientRect(window, &windowRect);
+
+	UINT width = windowRect.right - windowRect.left;
+	UINT height = windowRect.bottom - windowRect.top;
+
+	if(!createDevice(window, width, height, fullScreen))
+		return false;
+	if(!createInitialRenderTarget(width, height))
+		return false;
+
+	return true;
 }
