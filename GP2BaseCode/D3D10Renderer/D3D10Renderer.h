@@ -27,6 +27,7 @@ private:
 	bool createInitialRenderTarget(int windowWidth, int windowHeight);
 private:
 	//D3D10 stuff
+	//Pointers declared
 	ID3D10Device * m_pD3D10Device;
 	IDXGISwapChain * m_pSwapChain;
 	ID3D10RenderTargetView * m_pRenderTargetView;

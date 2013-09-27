@@ -1,12 +1,18 @@
 //header guard, so this file is only compiled once
 #pragma once
 
+
 #include <string>
 
+//We have this here so we dont need to prefix all
+//standard library types with std::
 using namespace std;
 
-//Forward declaration of our Window Interface
+//Forward declarations
+
+//Window Interface
 class IWindow;
+//Renderer Interface
 class IRenderer;
 
 //Structure for holding GameOptions, this will be loaded from config files 
@@ -18,35 +24,36 @@ struct GameOptionsDesc
 	bool fullscreen;
 };
 
-//We have this here so we dont need to prefix all
-//standard library types with std::
-using namespace std;
 
-//Our Game Application class
+
+//Game Application class
 class CGameApplication
 {
+	//public functions
 public:
+	//Constructor
 	CGameApplication(void);
-	//virtual deconstructor, so this can be overridden
+	//virtual deconstructor
 	virtual ~CGameApplication(void);
-	//Virtual function, can be overridden
+	//Virtual function, can be overridden by method in inheriting class with same signature
 	virtual bool init();
 	void run();
-	//Virtual function, can be overridden
 	virtual void render();
-	//Virtual function, can be overridden
 	virtual void update();
+	//private functions
 private:
 	bool parseConfigFile();
 	bool initInput();
 	bool initGame();
 	bool initGraphics();
 	bool initPhysics();
-
 	bool initWindow();
+	//private variables
 private:
+	//pointer types
 	IWindow * m_pWindow;
 	IRenderer * m_pRenderer;
+
 	GameOptionsDesc m_GameOptionDesc;
 	wstring m_ConfigFileName;
 

@@ -6,19 +6,20 @@
 
 #include <fstream> 
 using namespace std;
+
 //Constructor
 CGameApplication::CGameApplication(void)
 {
-//Set to NULL
+	//Set to NULL
 	m_pWindow = NULL;
 	m_pRenderer=NULL;
-	//Set the windoe name to GP2
+	//Set the window name to GP2
 	m_GameOptionDesc.gameName = TEXT("GP2");
 	//Window Height and Width
 	m_GameOptionDesc.width=640;
 	m_GameOptionDesc.height=480;
-	//Full screen
-	m_GameOptionDesc.fullscreen=false;
+	//Full screen off
+	m_GameOptionDesc.fullscreen = false;
 	//config options
 	m_ConfigFileName=TEXT("game.cfg");
 }
@@ -26,19 +27,20 @@ CGameApplication::CGameApplication(void)
 //Deconstructor
 CGameApplication::~CGameApplication(void)
 {
-		if (m_pRenderer)
+	if (m_pRenderer)
 	{
 		delete m_pRenderer;
 		m_pRenderer=NULL;
 	}
-if(m_pWindow)
-{
-	delete m_pWindow;
-	m_pWindow=NULL;
-}
+
+	if(m_pWindow)
+	{
+		delete m_pWindow;
+		m_pWindow=NULL;
+	}
 }
 
-//Init
+
 //This initialises all subsystems
 bool CGameApplication::init()
 {

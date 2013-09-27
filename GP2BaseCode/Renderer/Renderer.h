@@ -1,6 +1,8 @@
 #pragma once
 
 //Interface class
+//Everything declared within an interface must be implimented with the
+//inheriting class
 class IRenderer
 {
 public:

@@ -9,6 +9,7 @@
 
 //Check to see if we are on windows
 #ifdef WIN32
+//Entry point for windows application
 int WINAPI WinMain(HINSTANCE hInstance, 
 					HINSTANCE hPrevInstance, 
 					LPSTR lpCmdLine,
@@ -18,6 +19,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 int main(int argc, char **argv)
 #endif
 {
+
 	CGameApplication *pApp = new CGameApplication();
 	if (!pApp->init())
 	{
