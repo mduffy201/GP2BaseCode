@@ -3,6 +3,7 @@
 //should really check to see if we are on a windows platform
 #include "../Window/Win32Window.h"
 #include "../D3D10Renderer/D3D10Renderer.h"
+
 #include <fstream> 
 using namespace std;
 //Constructor
