@@ -14,6 +14,11 @@ D3D10Renderer::D3D10Renderer()
 	
 	m_pDepthStencelView = NULL;
 	m_pDepthStencilTexture = NULL;
+
+	m_pTempEffect = NULL;
+	m_pTempTechnique = NULL;
+	m_pTempBuffer = NULL;
+	m_pTempVertexLayout = NULL;
 }
 
 //Destructor
@@ -55,6 +60,12 @@ bool D3D10Renderer::init(void *pWindowHandle, bool fullScreen)
 		return false;
 	if(!createInitialRenderTarget(width, height))
 		return false;
+/*if(!loadEffectFromMemory())
+		return false;
+	if(!createBuffer())
+		return false;
+	if(!createVertexLayout())
+		return false;*/
 
 	return true;
 }
@@ -253,4 +264,18 @@ void D3D10Renderer::present()
 	//Swaps the buffers in the chain, the back buffer to the front(screen)
 	//http://msdn.microsoft.com/en-us/library/bb174576%28v=vs.85%29.aspx - BMD
     m_pSwapChain->Present( 0, 0 );
+}
+
+void D3D10Renderer::render()
+{}
+bool D3D10Renderer::loadEffectFromMemory(const char* pMem){
+return true;
+}
+		
+bool D3D10Renderer::createBuffer(){
+return true;
+}
+	
+bool D3D10Renderer::createVertexLayout(){
+return true;
 }
