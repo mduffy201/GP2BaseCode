@@ -8,6 +8,16 @@ struct Vertex {
 	float x, y, z;
 };
 
+const char basicEffect[]=\
+	"float4 VS(float4 Pos:POSITION):SV_POSITION"\
+	"{"\
+	"	return Pos;"\
+	"}"\
+	"float4 PS(float4 Pos:SV_POSITION):SV_Target"\
+	"{"\
+	"return float4 (1.0f, 1.0f, 0.0f, 1.0f);"\
+	"}"\
+
 //Constructor
 D3D10Renderer::D3D10Renderer()
 {
@@ -24,7 +34,6 @@ D3D10Renderer::D3D10Renderer()
 	m_pTempBuffer = NULL;
 	m_pTempVertexLayout = NULL;
 }
-
 //Destructor
 D3D10Renderer::~D3D10Renderer()
 {
@@ -49,7 +58,6 @@ D3D10Renderer::~D3D10Renderer()
 	if (m_pD3D10Device)
 		m_pD3D10Device->Release();
 }
-
 //Calculate the size of the window to be drawn
 bool D3D10Renderer::init(void *pWindowHandle, bool fullScreen)
 {
@@ -75,7 +83,6 @@ bool D3D10Renderer::init(void *pWindowHandle, bool fullScreen)
 
 	return true;
 }
-
 //Creates the device to interface with the graphics hardware and also a swapchain 
 //which holds a series of drawing buffers
 bool D3D10Renderer::createDevice(HWND window, int windowWidth, int windowHeight, bool fullScreen)
@@ -131,7 +138,6 @@ bool D3D10Renderer::createDevice(HWND window, int windowWidth, int windowHeight,
 
 	return true;
 }
-
 //Grabs the backbuffer from the swap chain and then creates
 //a depth stencil texture
 bool D3D10Renderer::createInitialRenderTarget(int windowWidth, int windowHeight)
@@ -240,7 +246,6 @@ bool D3D10Renderer::createInitialRenderTarget(int windowWidth, int windowHeight)
 		, &vp );
 	return true;
 }
-
 //clears all buffers and then presents the swapchain which flip the back and the front buffers and low
 //and behold an image will appear
 void D3D10Renderer::clear(float r,float g,float b,float a)
@@ -271,13 +276,11 @@ void D3D10Renderer::present()
 	//http://msdn.microsoft.com/en-us/library/bb174576%28v=vs.85%29.aspx - BMD
     m_pSwapChain->Present( 0, 0 );
 }
-
 void D3D10Renderer::render()
 {}
 bool D3D10Renderer::loadEffectFromMemory(const char* pMem){
 return true;
-}
-		
+}	
 bool D3D10Renderer::createBuffer(){
 	
 	Vertex verts[] = {
@@ -303,7 +306,6 @@ bool D3D10Renderer::createBuffer(){
 
 return true;
 }
-	
 bool D3D10Renderer::createVertexLayout(){
 return true;
 }
