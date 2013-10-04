@@ -309,10 +309,17 @@ bool D3D10Renderer::loadEffectFromMemory(const char* pMem){
 
 bool D3D10Renderer::createBuffer(){
 	
+	/*Vertex verts[] = {
+		{-1.0f,-1.0f,0.0f},	//Bottom left point
+		{0.0f,1.0f,0.0f},	//Top point
+		{1.0f,-1.0f,0.0f}	//Bottom right point
+	};*/
+
+	//Right angled triangle
 	Vertex verts[] = {
-		{-1.0f,-1.0f,0.0f},
-		{0.0f,1.0f,0.0f},
-		{1.0f,-1.0f,0.0f}
+		{-1.0f,-1.0f,0.0f},	//Bottom left point
+		{0.0f,1.0f,0.0f},	//Top point
+		{0.0f,-1.0f,0.0f}	//Bottom right point
 	};
 
 	D3D10_BUFFER_DESC bd;
