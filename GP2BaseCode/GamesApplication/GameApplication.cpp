@@ -113,9 +113,7 @@ void CGameApplication::run()
 	{
 		//check for all windows messages
 		m_pWindow->checkForWindowMessages();
-		//update
 		update();
-		//render
 		render();
 	}
 }
