@@ -17,6 +17,16 @@ const char basicEffect[]=\
 	"{"\
 	"return float4 (1.0f, 1.0f, 0.0f, 1.0f);"\
 	"}"\
+	"technique10 Render"\
+	"{"\
+	"	Pass P0"\
+	"	{"\
+	"		SetVertexShader(CompileShader(vs_4_0, VS()));"\
+	"		SetGeometryShader(NULL);"\
+	"		SetPixelShader(CompileShader(ps_4_0, PS()));"\
+	"	}"\
+	"}";
+	
 
 //Constructor
 D3D10Renderer::D3D10Renderer()
@@ -44,6 +54,8 @@ D3D10Renderer::~D3D10Renderer()
 
 	if(m_pTempBuffer)
 		m_pTempBuffer->Release();
+	if(m_pTempEffect)
+		m_pTempEffect->Release();
 	//Release each of the DX10 interfaces
 	//Release(): Release the pointer when no referenced objects remain
 	//From IUnkown Interface
@@ -278,9 +290,40 @@ void D3D10Renderer::present()
 }
 void D3D10Renderer::render()
 {}
+
 bool D3D10Renderer::loadEffectFromMemory(const char* pMem){
-return true;
+
+	DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
+
+#if defined(DEBUG)||defined(_DEBUG)
+	dwShaderFlags |= D3D10_SHADER_DEBUG;
+#endif
+	
+	ID3D10Blob * pErrorBuffer = NULL;
+
+	if (FAILED(D3DX10CreateEffectFromMemory(pMem,
+		strlen(pMem),
+		NULL,
+		NULL,
+		NULL,
+		"fx_4_0",
+		dwShaderFlags,
+		0,
+		m_pD3D10Device,
+		NULL,
+		NULL,
+		&m_pTempEffect,
+		&pErrorBuffer,
+		NULL)))
+	{
+		OutputDebugStringA((char*)pErrorBuffer->GetBufferPointer());
+		return false;
+	}
+
+	m_pTempTechnique = m_pTempEffect->GetTechniqueByName("Render");
+	//return true;
 }	
+
 bool D3D10Renderer::createBuffer(){
 	
 	Vertex verts[] = {
