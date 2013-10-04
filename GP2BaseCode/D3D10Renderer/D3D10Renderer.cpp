@@ -8,6 +8,17 @@ struct Vertex {
 	float x, y, z;
 };
 
+const D3D10_INPUT_ELEMENT_DESC VertexLayout[] = 
+{
+	{"POSITION",
+	0,
+	DXGI_FORMAT_R32G32B32A32_FLOAT,
+	0,
+	0,
+	D3D10_INPUT_PER_VERTEX_DATA,
+	0},
+};
+
 const char basicEffect[]=\
 	"float4 VS(float4 Pos:POSITION):SV_POSITION"\
 	"{"\
@@ -56,6 +67,8 @@ D3D10Renderer::~D3D10Renderer()
 		m_pTempBuffer->Release();
 	if(m_pTempEffect)
 		m_pTempEffect->Release();
+	if(m_pTempVertexLayout)
+		m_pTempVertexLayout->Release();
 	//Release each of the DX10 interfaces
 	//Release(): Release the pointer when no referenced objects remain
 	//From IUnkown Interface
@@ -321,7 +334,7 @@ bool D3D10Renderer::loadEffectFromMemory(const char* pMem){
 	}
 
 	m_pTempTechnique = m_pTempEffect->GetTechniqueByName("Render");
-	//return true;
+	return true;
 }	
 
 bool D3D10Renderer::createBuffer(){
@@ -350,5 +363,18 @@ bool D3D10Renderer::createBuffer(){
 return true;
 }
 bool D3D10Renderer::createVertexLayout(){
+	UINT numElements = sizeof(VertexLayout)/ sizeof(D3D10_INPUT_ELEMENT_DESC);
+	D3D10_PASS_DESC PassDesc;
+	m_pTempTechnique->GetPassByIndex(0)->GetDesc(&PassDesc);
+
+	if (FAILED(m_pD3D10Device->CreateInputLayout(
+		VertexLayout,
+		numElements,
+		PassDesc.pIAInputSignature,
+		PassDesc.IAInputSignatureSize,
+		&m_pTempVertexLayout)))
+	{
+		OutputDebugStringA("Can't create layout");
+	}
 return true;
 }
