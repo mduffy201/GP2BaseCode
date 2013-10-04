@@ -26,7 +26,7 @@ const char basicEffect[]=\
 	"}"\
 	"float4 PS(float4 Pos:SV_POSITION):SV_Target"\
 	"{"\
-	"return float4 (1.0f, 1.0f, 0.0f, 1.0f);"\
+	"	return float4 (1.0f, 1.0f, 0.0f, 1.0f);"\
 	"}"\
 	"technique10 Render"\
 	"{"\
@@ -51,7 +51,7 @@ D3D10Renderer::D3D10Renderer()
 	m_pDepthStencilTexture = NULL;
 
 	m_pTempEffect = NULL;
-	m_pTempTechnique = NULL;
+	//m_pTempTechnique = NULL;
 	m_pTempBuffer = NULL;
 	m_pTempVertexLayout = NULL;
 }
@@ -63,12 +63,14 @@ D3D10Renderer::~D3D10Renderer()
 	if (m_pD3D10Device)
 		m_pD3D10Device->ClearState();
 
-	if(m_pTempBuffer)
-		m_pTempBuffer->Release();
 	if(m_pTempEffect)
 		m_pTempEffect->Release();
-	if(m_pTempVertexLayout)
+		if(m_pTempVertexLayout)
 		m_pTempVertexLayout->Release();
+	if(m_pTempBuffer)
+		m_pTempBuffer->Release();
+	
+
 	//Release each of the DX10 interfaces
 	//Release(): Release the pointer when no referenced objects remain
 	//From IUnkown Interface
@@ -78,7 +80,7 @@ D3D10Renderer::~D3D10Renderer()
 		m_pDepthStencelView->Release();
 	if(m_pDepthStencilTexture)
 		m_pDepthStencilTexture->Release();
-		if(m_pSwapChain)
+	if(m_pSwapChain)
 		m_pSwapChain->Release();
 	if (m_pD3D10Device)
 		m_pD3D10Device->Release();
@@ -99,12 +101,14 @@ bool D3D10Renderer::init(void *pWindowHandle, bool fullScreen)
 		return false;
 	if(!createInitialRenderTarget(width, height))
 		return false;
-/*if(!loadEffectFromMemory())
+
+	if(!loadEffectFromMemory(basicEffect))
+		return false;
+	if(!createVertexLayout())
 		return false;
 	if(!createBuffer())
 		return false;
-	if(!createVertexLayout())
-		return false;*/
+	
 
 	return true;
 }
@@ -271,38 +275,6 @@ bool D3D10Renderer::createInitialRenderTarget(int windowWidth, int windowHeight)
 		, &vp );
 	return true;
 }
-//clears all buffers and then presents the swapchain which flip the back and the front buffers and low
-//and behold an image will appear
-void D3D10Renderer::clear(float r,float g,float b,float a)
-{
-    // Just clear the backbuffer, colours start at 0.0 to 1.0
-	// Red, Green , Blue, Alpha - BMD
-    const float ClearColor[4] = { r, g, b, a}; 
-	//Clear the Render Target
-	//http://msdn.microsoft.com/en-us/library/bb173539%28v=vs.85%29.aspx - BMD
-    
-	//ClearRenderTargetView=================
-	//Method which sets all the elements in a render target to one value.
-
-	m_pD3D10Device->ClearRenderTargetView( m_pRenderTargetView, ClearColor );
-	
-	//ClearDepthStencilView==============
-	//Method to clear the depth-stencil resource
-
-	m_pD3D10Device->ClearDepthStencilView(m_pDepthStencelView,D3D10_CLEAR_DEPTH,1.0f,0);
-}
-void D3D10Renderer::present()
-{
-
-	//Present================
-	//Presents a rendered image to the user.
-
-	//Swaps the buffers in the chain, the back buffer to the front(screen)
-	//http://msdn.microsoft.com/en-us/library/bb174576%28v=vs.85%29.aspx - BMD
-    m_pSwapChain->Present( 0, 0 );
-}
-void D3D10Renderer::render()
-{}
 
 bool D3D10Renderer::loadEffectFromMemory(const char* pMem){
 
@@ -362,6 +334,7 @@ bool D3D10Renderer::createBuffer(){
 
 return true;
 }
+
 bool D3D10Renderer::createVertexLayout(){
 	UINT numElements = sizeof(VertexLayout)/ sizeof(D3D10_INPUT_ELEMENT_DESC);
 	D3D10_PASS_DESC PassDesc;
@@ -378,3 +351,66 @@ bool D3D10Renderer::createVertexLayout(){
 	}
 return true;
 }
+
+//clears all buffers and then presents the swapchain which flip the back and the front buffers and low
+//and behold an image will appear
+void D3D10Renderer::clear(float r,float g,float b,float a)
+{
+    // Just clear the backbuffer, colours start at 0.0 to 1.0
+	// Red, Green , Blue, Alpha - BMD
+    const float ClearColor[4] = { r, g, b, a}; 
+	//Clear the Render Target
+	//http://msdn.microsoft.com/en-us/library/bb173539%28v=vs.85%29.aspx - BMD
+    
+	//ClearRenderTargetView=================
+	//Method which sets all the elements in a render target to one value.
+
+	m_pD3D10Device->ClearRenderTargetView( m_pRenderTargetView, ClearColor );
+	
+	//ClearDepthStencilView==============
+	//Method to clear the depth-stencil resource
+
+	m_pD3D10Device->ClearDepthStencilView(m_pDepthStencelView,D3D10_CLEAR_DEPTH,1.0f,0);
+}
+
+void D3D10Renderer::render()
+{
+	m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_pD3D10Device->IASetInputLayout(m_pTempVertexLayout);
+
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+
+	m_pD3D10Device->IASetVertexBuffers(
+		0,
+		1,
+		&m_pTempBuffer,
+		&stride,
+		&offset);
+
+	D3D10_TECHNIQUE_DESC techniqueDesc;
+	m_pTempTechnique->GetDesc(&techniqueDesc);
+
+	for(unsigned int i=0;i<techniqueDesc.Passes;++i)
+	{
+		ID3D10EffectPass *pCurrentPass= m_pTempTechnique->GetPassByIndex(i);
+		pCurrentPass->Apply(0);
+		m_pD3D10Device->Draw(3,0);
+	}
+}
+
+void D3D10Renderer::present()
+{
+
+	//Present================
+	//Presents a rendered image to the user.
+
+	//Swaps the buffers in the chain, the back buffer to the front(screen)
+	//http://msdn.microsoft.com/en-us/library/bb174576%28v=vs.85%29.aspx - BMD
+    m_pSwapChain->Present( 0, 0 );
+}
+
+
+
+
+
