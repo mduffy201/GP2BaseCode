@@ -12,7 +12,7 @@ const D3D10_INPUT_ELEMENT_DESC VertexLayout[] =
 {
 	{"POSITION",
 	0,
-	DXGI_FORMAT_R32G32B32A32_FLOAT,
+	DXGI_FORMAT_R32G32B32_FLOAT,
 	0,
 	0,
 	D3D10_INPUT_PER_VERTEX_DATA,
@@ -20,21 +20,21 @@ const D3D10_INPUT_ELEMENT_DESC VertexLayout[] =
 };
 
 const char basicEffect[]=\
-	"float4 VS(float4 Pos:POSITION):SV_POSITION"\
+	"float4 VS( float4 Pos : POSITION ) : SV_POSITION"\
 	"{"\
 	"	return Pos;"\
 	"}"\
-	"float4 PS(float4 Pos:SV_POSITION):SV_Target"\
+	"float4 PS( float4 Pos : SV_POSITION ) : SV_Target"\
 	"{"\
-	"	return float4 (1.0f, 1.0f, 0.0f, 1.0f);"\
+	"	return float4( 1.0f, 1.0f, 0.0f, 1.0f );"\
 	"}"\
 	"technique10 Render"\
 	"{"\
-	"	Pass P0"\
+	"	pass P0"\
 	"	{"\
-	"		SetVertexShader(CompileShader(vs_4_0, VS()));"\
-	"		SetGeometryShader(NULL);"\
-	"		SetPixelShader(CompileShader(ps_4_0, PS()));"\
+	"		SetVertexShader( CompileShader( vs_4_0, VS() ) );"\
+	"		SetGeometryShader( NULL );"\
+	"		SetPixelShader( CompileShader( ps_4_0, PS() ) );"\
 	"	}"\
 	"}";
 	
@@ -108,8 +108,6 @@ bool D3D10Renderer::init(void *pWindowHandle, bool fullScreen)
 		return false;
 	if(!createBuffer())
 		return false;
-	
-
 	return true;
 }
 //Creates the device to interface with the graphics hardware and also a swapchain 
