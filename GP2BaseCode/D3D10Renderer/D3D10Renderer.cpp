@@ -302,11 +302,18 @@ bool D3D10Renderer::createBuffer(){
 	};*/
 
 		//LineList
-			Vertex verts[] = {
+		/*	Vertex verts[] = {
 		{-1.0f,0.0f,0.0f},	
 		{1.0f,0.0f,0.0f},
 		{0.0f,1.0f,0.0f},	
 		{0.0f,-1.0f,0.0f}
+	};*/
+			//Square
+			Vertex verts[] = {
+				{-0.5f,0.5f,0.0f},   //top left
+				{0.5f,0.5f,0.0f},//top right
+				{-0.5f,-0.5f,0.0f},//bottom left
+				{0.5f,-0.5f,0.0f}//bottom right
 		
 	};
 
@@ -372,7 +379,8 @@ void D3D10Renderer::render()
 	//m_pD3D10Device->IASetPrimitiveTopology(		//Bind information about the primitive type, and data order that describes input data for the input assembler stage.
 	//D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);    
 	//m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);			//Point
-	m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_LINELIST);			//Line
+	//m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_LINELIST);			//Line
+	m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	m_pD3D10Device->IASetInputLayout(	//Bind an input-layout object to the input-assembler stage.
 		m_pTempVertexLayout);			//IN - Input layout object
 
