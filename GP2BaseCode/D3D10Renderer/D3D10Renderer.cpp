@@ -277,45 +277,14 @@ bool D3D10Renderer::loadEffectFromMemory(const char* pMem){
 
 bool D3D10Renderer::createBuffer(){
 	
-	/*Vertex verts[] = {
+	Vertex verts[] = {
 		{-1.0f,-1.0f,0.0f},	//Bottom left point
-		{0.0f,1.0f,0.0f},	//Top point
-		{1.0f,-1.0f,0.0f}	//Bottom right point
-	};*/
-
-	//Right angled triangle
-/*	Vertex verts[] = {
-		{-1.0f,-1.0f,0.0f},	
-		{0.0f,1.0f,0.0f},	
-		{0.0f,-1.0f,0.0f}	
-	};*/
-
-	//Point
-/*		Vertex verts[] = {
-		{0.0f,0.0f,0.0f},	
-	};*/
-
-		//Line
-	/*	Vertex verts[] = {
-		{-1.0f,0.0f,0.0f},	
-		{1.0f,0.0f,0.0f}		
-	};*/
-
-		//LineList
-		/*	Vertex verts[] = {
-		{-1.0f,0.0f,0.0f},	
-		{1.0f,0.0f,0.0f},
-		{0.0f,1.0f,0.0f},	
-		{0.0f,-1.0f,0.0f}
-	};*/
-			//Square
-			Vertex verts[] = {
-				{-0.5f,0.5f,0.0f},   //top left
-				{0.5f,0.5f,0.0f},//top right
-				{-0.5f,-0.5f,0.0f},//bottom left
-				{0.5f,-0.5f,0.0f}//bottom right
-		
+		{-1.0f,1.0f,0.0f},	//Top point
+		{1.0f,-1.0f,0.0f},
+		{1.0f,1.0f,1.0f}//Bottom right point
 	};
+
+	
 
 	D3D10_BUFFER_DESC bd;
 	bd.Usage = D3D10_USAGE_DEFAULT;					//how the buffer is expected to be read from and written to.
@@ -380,6 +349,7 @@ void D3D10Renderer::render()
 	//D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);    
 	//m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);			//Point
 	//m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_LINELIST);			//Line
+	
 	m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	m_pD3D10Device->IASetInputLayout(	//Bind an input-layout object to the input-assembler stage.
 		m_pTempVertexLayout);			//IN - Input layout object
