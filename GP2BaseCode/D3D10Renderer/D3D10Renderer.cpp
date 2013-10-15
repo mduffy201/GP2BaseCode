@@ -4,7 +4,7 @@
 
 
 struct Vertex {
-	float x, y, z;
+	float x, y, z, tu, tv;
 };
 
 const D3D10_INPUT_ELEMENT_DESC VertexLayout[] =  //description of an array of elements for the input-assembler stage.
@@ -15,7 +15,14 @@ const D3D10_INPUT_ELEMENT_DESC VertexLayout[] =  //description of an array of el
 	0,										//an integer value that identifies the input-assembler 
 	0,										//Offset (in bytes) between each element.
 	D3D10_INPUT_PER_VERTEX_DATA,			//input data class for a single input slot
-	0},										//number of instances to draw before stepping one unit forward in a vertex buffer
+	0},	//number of instances to draw before stepping one unit forward in a vertex buffer
+	{"TEXCOORD",
+	0,
+	DXGI_FORMAT_R32G32_FLOAT,
+	0,
+	12,
+	D3D10_INPUT_PER_VERTEX_DATA,
+	0}
 };
 
 const char basicEffect[]=\
@@ -328,10 +335,10 @@ bool D3D10Renderer::loadEffectFromFile(char* pFilename)
 bool D3D10Renderer::createBuffer(){
 	
 	Vertex verts[] = {
-		{-1.0f,-1.0f,0.0f},	//Bottom left point
-		{-1.0f,1.0f,0.0f},	//Top point
-		{1.0f,-1.0f,0.0f},
-		{1.0f,1.0f,1.0f}//Bottom right point
+		{-1.0f,-1.0f,0.0f,0.0f, 1.0f},	//Bottom left point
+		{-1.0f,1.0f,0.0f, 0.0f, 0.0f},	//Top point
+		{1.0f,-1.0f,0.0f, 1.0f, 1.0f},
+		{1.0f,1.0f,0.0f, 1.0f, 0.0f}//Bottom right point
 	};
 
 	
@@ -457,6 +464,20 @@ void D3D10Renderer::createCamera(XMVECTOR &position, XMVECTOR &focus, XMVECTOR &
 void D3D10Renderer::positionObject(float x, float y, float z)
 {
 	m_World = XMMatrixTranslation(x,y,z);
+}
+
+bool D3D10Renderer::loadBaseTexture(char* pFilename)
+{
+	if(FAILED(D3DX10CreateShaderResourceViewFromFileA(m_pD3D10Device,
+		pFilename,
+		NULL,
+		NULL,
+		&m_pBaseTextureMap,
+		NULL)))
+{
+	return false;
+	}
+	return true;
 }
 
 
