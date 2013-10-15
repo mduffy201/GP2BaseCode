@@ -101,7 +101,7 @@ bool D3D10Renderer::init(void *pWindowHandle, bool fullScreen)
 	XMFLOAT3 up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
 	createCamera(XMLoadFloat3(&cameraPos), XMLoadFloat3(&focusPos), XMLoadFloat3(&up), XM_PI/4, (float)width/(float)height, 0.1f, 100.0f);
-
+	positionObject(1.0f, 2.0f, 1.0f);
 
 	//Calls functions in D3D10Renderer.
 	if(!createDevice(window, width, height, fullScreen))
@@ -453,6 +453,10 @@ void D3D10Renderer::createCamera(XMVECTOR &position, XMVECTOR &focus, XMVECTOR &
 	m_View = XMMatrixLookAtLH(position, focus, up);
 
 	m_Projection = XMMatrixPerspectiveFovLH(fov, aspectRatio,nearClip,farClip);
+}
+void D3D10Renderer::positionObject(float x, float y, float z)
+{
+	m_World = XMMatrixTranslation(x,y,z);
 }
 
 
