@@ -1,8 +1,7 @@
 #include "D3D10Renderer.h"
 
 //Include header files from DX10 library
-#include <D3D10.h>
-#include <D3DX10.h>
+
 
 struct Vertex {
 	float x, y, z;
@@ -53,6 +52,10 @@ D3D10Renderer::D3D10Renderer()
 	m_pTempEffect = NULL;
 	m_pTempBuffer = NULL;
 	m_pTempVertexLayout = NULL;
+
+	m_View = XMMatrixIdentity();
+	m_Projection = XMMatrixIdentity();
+	m_World  = XMMatrixIdentity();
 }
 
 //Destructor
@@ -93,13 +96,21 @@ bool D3D10Renderer::init(void *pWindowHandle, bool fullScreen)
 	UINT width = windowRect.right - windowRect.left;
 	UINT height = windowRect.bottom - windowRect.top;
 
+	XMFLOAT3 cameraPos = XMFLOAT3(0.0f, 0.0f, -10.0f);
+	XMFLOAT3 focusPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	XMFLOAT3 up = XMFLOAT3(0.0f, 1.0f, 0.0f);
+
+	createCamera(XMLoadFloat3(&cameraPos), XMLoadFloat3(&focusPos), XMLoadFloat3(&up), XM_PI/4, (float)width/(float)height, 0.1f, 100.0f);
+
+
 	//Calls functions in D3D10Renderer.
 	if(!createDevice(window, width, height, fullScreen))
 		return false;
 	if(!createInitialRenderTarget(width, height))
 		return false;
 
-	if(!loadEffectFromMemory(basicEffect))
+	//if(!loadEffectFromMemory(basicEffect))
+	if(!loadEffectFromFile("../Debug/Effects/Transform.fx"))
 		return false;
 	if(!createVertexLayout())
 		return false;
@@ -275,6 +286,45 @@ bool D3D10Renderer::loadEffectFromMemory(const char* pMem){
 	return true;
 }	
 
+
+bool D3D10Renderer::loadEffectFromFile(char* pFilename)
+{
+	DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
+
+#if defined(DEBUG)||defined(_DEBUG)
+	dwShaderFlags |= D3D10_SHADER_DEBUG;
+#endif
+	
+	ID3D10Blob * pErrorBuffer = NULL;
+
+	if(FAILED(D3DX10CreateEffectFromFileA(
+		pFilename, 
+		NULL,
+		NULL,
+		"fx_4_0",
+		dwShaderFlags,
+		0,
+		m_pD3D10Device,
+		NULL,
+		NULL,
+		&m_pTempEffect,
+		&pErrorBuffer,
+		NULL)))
+	{
+		OutputDebugStringA((char*)pErrorBuffer->GetBufferPointer());
+		return false;
+	}
+
+	m_pWorldEffectVariable = m_pTempEffect->GetVariableByName("matWorld")->AsMatrix();
+	m_pViewEffectVariable = m_pTempEffect->GetVariableByName("matView")->AsMatrix();
+	m_pProjectionEffectVariable = m_pTempEffect->GetVariableByName("matProjection")->AsMatrix();
+
+	m_pTempTechnique = m_pTempEffect->GetTechniqueByName("Render");
+	return true;
+}
+
+
+
 bool D3D10Renderer::createBuffer(){
 	
 	Vertex verts[] = {
@@ -305,6 +355,11 @@ return true;
 }
 
 bool D3D10Renderer::createVertexLayout(){
+
+	m_pWorldEffectVariable->SetMatrix((float*)&m_World);
+	m_pViewEffectVariable->SetMatrix((float*)&m_View);
+	m_pProjectionEffectVariable->SetMatrix((float*)&m_Projection);
+
 	UINT numElements = sizeof(VertexLayout)/ sizeof(D3D10_INPUT_ELEMENT_DESC);
 	D3D10_PASS_DESC PassDesc;
 	m_pTempTechnique->GetPassByIndex(0)->GetDesc(&PassDesc);
@@ -391,6 +446,13 @@ void D3D10Renderer::present()
 	//Swaps the buffers in the chain, the back buffer to the front(screen)
 	//http://msdn.microsoft.com/en-us/library/bb174576%28v=vs.85%29.aspx - BMD
     m_pSwapChain->Present( 0, 0 );
+}
+
+void D3D10Renderer::createCamera(XMVECTOR &position, XMVECTOR &focus, XMVECTOR &up, float fov, float aspectRatio, float nearClip, float farClip){
+	
+	m_View = XMMatrixLookAtLH(position, focus, up);
+
+	m_Projection = XMMatrixPerspectiveFovLH(fov, aspectRatio,nearClip,farClip);
 }
 
 
