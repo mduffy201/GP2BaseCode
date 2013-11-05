@@ -105,7 +105,7 @@ bool D3D10Renderer::init(void *pWindowHandle, bool fullScreen)
 	UINT width = windowRect.right - windowRect.left;
 	UINT height = windowRect.bottom - windowRect.top;
 
-	XMFLOAT3 cameraPos = XMFLOAT3(0.0f, 0.0f, -10.0f);
+	XMFLOAT3 cameraPos = XMFLOAT3(-5.0f, 5.0f, -10.0f);
 	XMFLOAT3 focusPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	XMFLOAT3 up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
@@ -341,10 +341,14 @@ bool D3D10Renderer::createBuffer(){
 	
 	//Vertex Buffer
 	Vertex verts[] = {
-		{-1.0f,-1.0f,0.0f,0.0f, 1.0f},	//Bottom left point
-		{-1.0f,1.0f,0.0f, 0.0f, 0.0f},	//Top point
-		{1.0f,-1.0f,0.0f, 1.0f, 1.0f},
-		{1.0f,1.0f,0.0f, 1.0f, 0.0f}//Bottom right point
+		{-1.0f,-1.0f,1.0f,0.0f, 1.0f},	//Bottom left point
+		{-1.0f,1.0f,1.0f, 0.0f, 0.0f},	//Top point
+		{1.0f,-1.0f,1.0f, 1.0f, 1.0f},
+		{1.0f,1.0f,1.0f, 1.0f, 0.0f},//Bottom right point
+		{-1.0f,-1.0f,-1.0f,0.0f, 1.0f},	//Bottom left point
+		{-1.0f,1.0f,-1.0f, 0.0f, 0.0f},	//Top point
+		{1.0f,-1.0f,-1.0f, 1.0f, 1.0f},
+		{1.0f,1.0f,-1.0f, 1.0f, 0.0f}
 	};
 
 	
@@ -352,7 +356,7 @@ bool D3D10Renderer::createBuffer(){
 
 	D3D10_BUFFER_DESC bd;
 	bd.Usage = D3D10_USAGE_DEFAULT;					//how the buffer is expected to be read from and written to.
-	bd.ByteWidth = sizeof(Vertex)*4;				//Size of the buffer in bytes.
+	bd.ByteWidth = sizeof(Vertex)*8;				//Size of the buffer in bytes.
 	bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;		//how the buffer will be bound to the pipeline.
 	bd.CPUAccessFlags = 0;
 	bd.MiscFlags = 0;
@@ -366,11 +370,16 @@ bool D3D10Renderer::createBuffer(){
 	}
 
 	//Index Buffer
-	int indices[] ={0,1,2,1,3,2};
+	int indices[] ={0,1,2,1,3,2, 
+		4,5,6,5,7,6, 
+		4,5,0,5,1,0, 
+		2,3,6,3,7,6, 
+		1,5,3,5,7,3, 
+		4,0,6,0,2,6};
 
 	D3D10_BUFFER_DESC indexBD;
 	indexBD.Usage = D3D10_USAGE_DEFAULT;					//how the buffer is expected to be read from and written to.
-	indexBD.ByteWidth = sizeof(int)*6;				//Size of the buffer in bytes.
+	indexBD.ByteWidth = sizeof(int)*36;				//Size of the buffer in bytes.
 	indexBD.BindFlags = D3D10_BIND_INDEX_BUFFER;		//how the buffer will be bound to the pipeline.
 	indexBD.CPUAccessFlags = 0;
 	indexBD.MiscFlags = 0;
@@ -466,7 +475,7 @@ void D3D10Renderer::render()
 		pCurrentPass->Apply(0);		//Set the state contained in a pass to the device.
 			
 		m_pD3D10Device->DrawIndexed(		//Draw non-indexed, non-instanced primitives.
-			6,						//Number of vertices to draw.
+			36,						//Number of vertices to draw.
 			0,
 			0);						//Index of the first vertex
 	}
