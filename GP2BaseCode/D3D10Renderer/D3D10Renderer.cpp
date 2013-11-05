@@ -175,8 +175,6 @@ bool D3D10Renderer::createDevice(HWND window, int windowWidth, int windowHeight,
 
 	return true;
 }
-
-
 //Grabs the backbuffer from the swap chain and then creates
 //a depth stencil texture
 bool D3D10Renderer::createInitialRenderTarget(int windowWidth, int windowHeight)
@@ -262,7 +260,6 @@ bool D3D10Renderer::createInitialRenderTarget(int windowWidth, int windowHeight)
 		);
 	return true;
 }
-
 bool D3D10Renderer::loadEffectFromMemory(const char* pMem){
 
 	DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
@@ -296,8 +293,6 @@ bool D3D10Renderer::loadEffectFromMemory(const char* pMem){
 	m_pTempTechnique = m_pTempEffect->GetTechniqueByName("Render");
 	return true;
 }	
-
-
 bool D3D10Renderer::loadEffectFromFile(char* pFilename)
 {
 	DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
@@ -492,7 +487,6 @@ void D3D10Renderer::present()
 	//http://msdn.microsoft.com/en-us/library/bb174576%28v=vs.85%29.aspx - BMD
     m_pSwapChain->Present( 0, 0 );
 }
-
 void D3D10Renderer::createCamera(XMVECTOR &position, XMVECTOR &focus, XMVECTOR &up, float fov, float aspectRatio, float nearClip, float farClip){
 	
 	m_View = XMMatrixLookAtLH(position, focus, up);
@@ -503,7 +497,6 @@ void D3D10Renderer::positionObject(float x, float y, float z)
 {
 	m_World = XMMatrixTranslation(x,y,z);
 }
-
 bool D3D10Renderer::loadBaseTexture(char* pFilename)
 {
 	if(FAILED(D3DX10CreateShaderResourceViewFromFileA(m_pD3D10Device,
