@@ -90,6 +90,8 @@ D3D10Renderer::~D3D10Renderer()
 		m_pSwapChain->Release();
 	if (m_pD3D10Device)
 		m_pD3D10Device->Release();
+	if(m_pTempIndexBuffer)
+		m_pTempIndexBuffer->Release();
 }
 
 //Calculate the size of the window to be drawn
@@ -337,6 +339,7 @@ bool D3D10Renderer::loadEffectFromFile(char* pFilename)
 
 bool D3D10Renderer::createBuffer(){
 	
+	//Vertex Buffer
 	Vertex verts[] = {
 		{-1.0f,-1.0f,0.0f,0.0f, 1.0f},	//Bottom left point
 		{-1.0f,1.0f,0.0f, 0.0f, 0.0f},	//Top point
@@ -344,6 +347,7 @@ bool D3D10Renderer::createBuffer(){
 		{1.0f,1.0f,0.0f, 1.0f, 0.0f}//Bottom right point
 	};
 
+	
 	
 
 	D3D10_BUFFER_DESC bd;
@@ -359,6 +363,24 @@ bool D3D10Renderer::createBuffer(){
 	if (FAILED(m_pD3D10Device->CreateBuffer(&bd,&InitData,&m_pTempBuffer)))
 	{
 		OutputDebugStringA("Can't create buffer");
+	}
+
+	//Index Buffer
+	int indices[] ={0,1,2,1,3,2};
+
+	D3D10_BUFFER_DESC indexBD;
+	indexBD.Usage = D3D10_USAGE_DEFAULT;					//how the buffer is expected to be read from and written to.
+	indexBD.ByteWidth = sizeof(int)*6;				//Size of the buffer in bytes.
+	indexBD.BindFlags = D3D10_BIND_INDEX_BUFFER;		//how the buffer will be bound to the pipeline.
+	indexBD.CPUAccessFlags = 0;
+	indexBD.MiscFlags = 0;
+
+	D3D10_SUBRESOURCE_DATA InitBData;
+	InitBData.pSysMem = &indices;
+
+	if (FAILED(m_pD3D10Device->CreateBuffer(&indexBD,&InitBData,&m_pTempIndexBuffer)))
+	{
+		OutputDebugStringA("Can't create index buffer");
 	}
 
 return true;
@@ -432,6 +454,8 @@ void D3D10Renderer::render()
 		&offset);							//IN - array of offset values; one offset value for each buffer in the vertex-buffer array. 
 													//Each offset is the number of bytes between the first element of a vertex buffer and the first element that will be used.
 
+	m_pD3D10Device->IASetIndexBuffer(m_pTempIndexBuffer, DXGI_FORMAT_R32_UINT,0);
+
 	D3D10_TECHNIQUE_DESC techniqueDesc;
 	m_pTempTechnique->GetDesc(&techniqueDesc);
 
@@ -441,8 +465,9 @@ void D3D10Renderer::render()
 		
 		pCurrentPass->Apply(0);		//Set the state contained in a pass to the device.
 			
-		m_pD3D10Device->Draw(		//Draw non-indexed, non-instanced primitives.
-			4,						//Number of vertices to draw.
+		m_pD3D10Device->DrawIndexed(		//Draw non-indexed, non-instanced primitives.
+			6,						//Number of vertices to draw.
+			0,
 			0);						//Index of the first vertex
 	}
 
